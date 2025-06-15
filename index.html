@@ -1,348 +1,400 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Life Duration Counter - Sci-Fi Interface</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+      @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Orbitron", monospace;
+        background: linear-gradient(45deg, #0a0a1a, #1a0a1a, #0a1a1a);
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
+        color: #00ffff;
+        min-height: 100vh;
+        position: relative;
+      }
+
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
         }
-        
-        body {
-            font-family: 'Orbitron', monospace;
-            background: linear-gradient(45deg, #0a0a1a, #1a0a1a, #0a1a1a);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-            color: #00ffff;
-            min-height: 100vh;
-            position: relative;
+        50% {
+          background-position: 100% 50%;
         }
-        
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        100% {
+          background-position: 0% 50%;
         }
-        
-        .stars {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: transparent;
+      }
+
+      .stars {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: transparent;
+      }
+
+      .star {
+        position: absolute;
+        background: #fff;
+        border-radius: 50%;
+        opacity: 0.8;
+        animation: twinkle 3s infinite alternate;
+      }
+
+      @keyframes twinkle {
+        0% {
+          opacity: 0.3;
+          transform: scale(1);
         }
-        
-        .star {
-            position: absolute;
-            background: #fff;
-            border-radius: 50%;
-            opacity: 0.8;
-            animation: twinkle 3s infinite alternate;
+        100% {
+          opacity: 1;
+          transform: scale(1.2);
         }
-        
-        @keyframes twinkle {
-            0% { opacity: 0.3; transform: scale(1); }
-            100% { opacity: 1; transform: scale(1.2); }
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+        position: relative;
+        z-index: 10;
+      }
+
+      .title {
+        font-size: 3em;
+        font-weight: 900;
+        text-align: center;
+        margin-bottom: 30px;
+        background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: colorShift 3s ease-in-out infinite;
+        text-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
+      }
+
+      @keyframes colorShift {
+        0%,
+        100% {
+          background-position: 0% 50%;
         }
-        
-        .container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-            position: relative;
-            z-index: 10;
+        50% {
+          background-position: 100% 50%;
         }
-        
-        .title {
-            font-size: 3em;
-            font-weight: 900;
-            text-align: center;
-            margin-bottom: 30px;
-            background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00);
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: colorShift 3s ease-in-out infinite;
-            text-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
+      }
+
+      .subtitle {
+        font-size: 1.2em;
+        margin-bottom: 40px;
+        text-align: center;
+        opacity: 0.8;
+        letter-spacing: 2px;
+      }
+
+      .life-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        max-width: 1200px;
+        width: 100%;
+      }
+
+      .time-unit {
+        background: rgba(0, 20, 30, 0.85);
+        border: 2px solid #00ffff;
+        border-radius: 15px;
+        padding: 25px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 255, 255, 0.3);
+        transition: all 0.3s ease;
+      }
+
+      .time-unit:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 255, 255, 0.5);
+        border-color: #ff00ff;
+      }
+
+      .time-unit::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        animation: scan 3s infinite;
+      }
+
+      @keyframes scan {
+        0% {
+          left: -100%;
         }
-        
-        @keyframes colorShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+        100% {
+          left: 100%;
         }
-        
-        .subtitle {
-            font-size: 1.2em;
-            margin-bottom: 40px;
-            text-align: center;
-            opacity: 0.8;
-            letter-spacing: 2px;
+      }
+
+      .unit-label {
+        font-size: 1.1em;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: #00ffff;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+      }
+
+      .unit-value {
+        font-size: 2.5em;
+        font-weight: 900;
+        color: #ffffff;
+        text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+        margin-bottom: 10px;
+        animation: pulse 2s ease-in-out infinite;
+        will-change: transform;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
         }
-        
+        50% {
+          transform: scale(1.02);
+        }
+      }
+
+      .birth-info {
+        position: relative;
+        margin-top: 30px;
+        font-size: 0.9em;
+        opacity: 0.6;
+        text-align: center;
+        border: 1px solid rgba(0, 255, 255, 0.3);
+        padding: 10px 20px;
+        border-radius: 25px;
+        backdrop-filter: blur(5px);
+      }
+
+      .scan-line {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #00ffff, transparent);
+        animation: scanLine 2s linear infinite;
+      }
+
+      @keyframes scanLine {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      @media (max-width: 1024px) {
         .life-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            max-width: 1200px;
-            width: 100%;
+          grid-template-columns: repeat(2, 1fr);
         }
-        
+      }
+
+      @media (max-width: 768px) {
+        .title {
+          font-size: 2em;
+        }
+        .life-grid {
+          grid-template-columns: 1fr;
+          gap: 15px;
+        }
         .time-unit {
-            background: rgba(0, 20, 30, 0.85);
-            border: 2px solid #00ffff;
-            border-radius: 15px;
-            padding: 25px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 255, 255, 0.3);
-            transition: all 0.3s ease;
+          padding: 20px;
         }
-        
-        .time-unit:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 255, 255, 0.5);
-            border-color: #ff00ff;
-        }
-        
-        .time-unit::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            animation: scan 3s infinite;
-        }
-        
-        @keyframes scan {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-        
-        .unit-label {
-            font-size: 1.1em;
-            font-weight: 700;
-            margin-bottom: 15px;
-            color: #00ffff;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
-        }
-        
         .unit-value {
-            font-size: 2.5em;
-            font-weight: 900;
-            color: #ffffff;
-            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
-            margin-bottom: 10px;
-            animation: pulse 2s ease-in-out infinite;
+          font-size: 2em;
         }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        
-        .birth-info {
-            position: relative;
-            margin-top: 30px;
-            font-size: 0.9em;
-            opacity: 0.6;
-            text-align: center;
-            border: 1px solid rgba(0, 255, 255, 0.3);
-            padding: 10px 20px;
-            border-radius: 25px;
-            backdrop-filter: blur(5px);
-        }
-        
-        .scan-line {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #00ffff, transparent);
-            animation: scanLine 2s linear infinite;
-        }
-        
-        @keyframes scanLine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-        
-        @media (max-width: 1024px) {
-            .life-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        
-        @media (max-width: 768px) {
-            .title { font-size: 2em; }
-            .life-grid { grid-template-columns: 1fr; gap: 15px; }
-            .time-unit { padding: 20px; }
-            .unit-value { font-size: 2em; }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="stars"></div>
     <div class="scan-line"></div>
-    
+
     <div class="container">
-        <h1 class="title">VINCENT OMAKU DOMINIC</h1>
-        <p class="subtitle">LIFE DURATION MATRIX</p>
-        
-        <div class="life-grid">
-            <div class="time-unit">
-                <div class="unit-label">Years</div>
-                <div class="unit-value" id="years">0</div>
-            </div>
-            
-            <div class="time-unit">
-                <div class="unit-label">Months</div>
-                <div class="unit-value" id="months">0</div>
-            </div>
-            
-            <div class="time-unit">
-                <div class="unit-label">Days</div>
-                <div class="unit-value" id="days">0</div>
-            </div>
-            
-            <div class="time-unit">
-                <div class="unit-label">Weeks</div>
-                <div class="unit-value" id="weeks">0</div>
-            </div>
-            
-            <div class="time-unit">
-                <div class="unit-label">Hours</div>
-                <div class="unit-value" id="hours">0</div>
-            </div>
-            
-            <div class="time-unit">
-                <div class="unit-label">Minutes</div>
-                <div class="unit-value" id="minutes">0</div>
-            </div>
-            
-            <div class="time-unit">
-                <div class="unit-label">Seconds</div>
-                <div class="unit-value" id="seconds">0</div>
-            </div>
+      <h1 class="title">VINCENT OMAKU DOMINIC</h1>
+      <p class="subtitle">LIFE DURATION MATRIX</p>
+
+      <div class="life-grid">
+        <div class="time-unit">
+          <div class="unit-label">Years</div>
+          <div class="unit-value" id="years">0</div>
         </div>
-        
-        <div class="birth-info">
-            BIRTH DATE: 03.07.2001 | 15:00:00 UTC
+
+        <div class="time-unit">
+          <div class="unit-label">Months</div>
+          <div class="unit-value" id="months">0</div>
         </div>
+
+        <div class="time-unit">
+          <div class="unit-label">Days</div>
+          <div class="unit-value" id="days">0</div>
+        </div>
+
+        <div class="time-unit">
+          <div class="unit-label">Weeks</div>
+          <div class="unit-value" id="weeks">0</div>
+        </div>
+
+        <div class="time-unit">
+          <div class="unit-label">Hours</div>
+          <div class="unit-value" id="hours">0</div>
+        </div>
+
+        <div class="time-unit">
+          <div class="unit-label">Minutes</div>
+          <div class="unit-value" id="minutes">0</div>
+        </div>
+
+        <div class="time-unit">
+          <div class="unit-label">Seconds</div>
+          <div class="unit-value" id="seconds">0</div>
+        </div>
+      </div>
+
+      <div class="birth-info">BIRTH DATE: 03.07.2001 | 15:00:00 UTC</div>
     </div>
 
     <script>
-        // Create animated stars
-        function createStars() {
-            const starsContainer = document.querySelector('.stars');
-            const numStars = 100;
-            
-            for (let i = 0; i < numStars; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                star.style.width = Math.random() * 3 + 1 + 'px';
-                star.style.height = star.style.width;
-                star.style.animationDelay = Math.random() * 3 + 's';
-                starsContainer.appendChild(star);
-            }
+      // Create animated stars
+      function createStars() {
+        const starsContainer = document.querySelector(".stars");
+        const numStars = 100;
+
+        for (let i = 0; i < numStars; i++) {
+          const star = document.createElement("div");
+          star.className = "star";
+          star.style.left = Math.random() * 100 + "%";
+          star.style.top = Math.random() * 100 + "%";
+          star.style.width = Math.random() * 3 + 1 + "px";
+          star.style.height = star.style.width;
+          star.style.animationDelay = Math.random() * 3 + "s";
+          starsContainer.appendChild(star);
         }
-        
-        // Birth date: July 3rd, 2001, 3 PM
-        const birthDate = new Date(2001, 6, 3, 15, 0, 0); // Month is 0-indexed
-        
-        function updateLifeDuration() {
-            const now = new Date();
-            const timeDiff = now.getTime() - birthDate.getTime();
-            
-            // Calculate total time units
-            const totalSeconds = Math.floor(timeDiff / 1000);
-            const totalMinutes = Math.floor(totalSeconds / 60);
-            const totalHours = Math.floor(totalMinutes / 60);
-            const totalDays = Math.floor(totalHours / 24);
-            const totalWeeks = Math.floor(totalDays / 7);
-            
-            // Calculate years and months more accurately
-            let years = now.getFullYear() - birthDate.getFullYear();
-            let months = now.getMonth() - birthDate.getMonth();
-            
-            if (months < 0) {
-                years--;
-                months += 12;
-            }
-            
-            // Adjust for day and time
-            if (now.getDate() < birthDate.getDate() || 
-                (now.getDate() === birthDate.getDate() && 
-                 (now.getHours() < birthDate.getHours() || 
-                  (now.getHours() === birthDate.getHours() && now.getMinutes() < birthDate.getMinutes())))) {
-                months--;
-                if (months < 0) {
-                    years--;
-                    months += 12;
-                }
-            }
-            
-            // Calculate remaining time units
-            const currentSeconds = totalSeconds % 60;
-            const currentMinutes = totalMinutes % 60;
-            const currentHours = totalHours % 24;
-            
-            // Update display with animated numbers
-            animateValue('years', years);
-            animateValue('months', months);
-            animateValue('days', totalDays);
-            animateValue('weeks', totalWeeks);
-            animateValue('hours', totalHours);
-            animateValue('minutes', totalMinutes);
-            animateValue('seconds', totalSeconds);
+      }
+
+      // Birth date: July 3rd, 2001, 3 PM
+      const birthDate = new Date(2001, 6, 3, 15, 0, 0); // Month is 0-indexed
+
+      function updateLifeDuration() {
+        const now = new Date();
+        const timeDiff = now.getTime() - birthDate.getTime();
+
+        // Calculate total time units
+        const totalSeconds = Math.floor(timeDiff / 1000);
+        const totalMinutes = Math.floor(totalSeconds / 60);
+        const totalHours = Math.floor(totalMinutes / 60);
+        const totalDays = Math.floor(totalHours / 24);
+        const totalWeeks = Math.floor(totalDays / 7);
+
+        // Calculate years and months more accurately
+        let years = now.getFullYear() - birthDate.getFullYear();
+        let months = now.getMonth() - birthDate.getMonth();
+
+        if (months < 0) {
+          years--;
+          months += 12;
         }
-        
-        function animateValue(elementId, newValue) {
-            const element = document.getElementById(elementId);
-            const currentValue = parseInt(element.textContent) || 0;
-            
-            if (currentValue !== newValue) {
-                element.style.transform = 'scale(1.1)';
-                element.style.color = '#ffff00';
-                
-                setTimeout(() => {
-                    element.textContent = newValue.toLocaleString();
-                    element.style.transform = 'scale(1)';
-                    element.style.color = '#00ffff';
-                }, 100);
-            }
+
+        // Adjust for day and time
+        if (
+          now.getDate() < birthDate.getDate() ||
+          (now.getDate() === birthDate.getDate() &&
+            (now.getHours() < birthDate.getHours() ||
+              (now.getHours() === birthDate.getHours() &&
+                now.getMinutes() < birthDate.getMinutes())))
+        ) {
+          months--;
+          if (months < 0) {
+            years--;
+            months += 12;
+          }
         }
-        
-        // Initialize
-        createStars();
-        updateLifeDuration();
-        
-        // Update every second
-        setInterval(updateLifeDuration, 1000);
-        
-        // Add some interactive effects
-        document.querySelectorAll('.time-unit').forEach(unit => {
-            unit.addEventListener('click', function() {
-                this.style.background = 'rgba(255, 0, 255, 0.2)';
-                setTimeout(() => {
-                    this.style.background = 'rgba(0, 255, 255, 0.1)';
-                }, 300);
-            });
+
+        // Calculate remaining time units
+        const currentSeconds = totalSeconds % 60;
+        const currentMinutes = totalMinutes % 60;
+        const currentHours = totalHours % 24;
+
+        // Update display with animated numbers
+        animateValue("years", years);
+        animateValue("months", months);
+        animateValue("days", totalDays);
+        animateValue("weeks", totalWeeks);
+        animateValue("hours", totalHours);
+        animateValue("minutes", totalMinutes);
+        animateValue("seconds", totalSeconds);
+      }
+
+      function animateValue(elementId, newValue) {
+        const element = document.getElementById(elementId);
+        const currentValue =
+          parseInt(element.textContent.replace(/,/g, "")) || 0;
+
+        if (currentValue !== newValue) {
+          element.style.transform = "scale(1.1)";
+          element.style.color = "#ffff00";
+
+          setTimeout(() => {
+            element.textContent = newValue.toLocaleString();
+            element.style.transform = "scale(1)";
+            element.style.color = "#ffffff";
+          }, 100);
+        } else {
+          // Just update the text without animation if value hasn't changed
+          element.textContent = newValue.toLocaleString();
+        }
+      }
+
+      // Initialize
+      createStars();
+      updateLifeDuration();
+
+      // Update every second
+      setInterval(updateLifeDuration, 1000);
+
+      // Add some interactive effects
+      document.querySelectorAll(".time-unit").forEach((unit) => {
+        unit.addEventListener("click", function () {
+          this.style.background = "rgba(255, 0, 255, 0.2)";
+          setTimeout(() => {
+            this.style.background = "rgba(0, 255, 255, 0.1)";
+          }, 300);
         });
+      });
     </script>
-</body>
+  </body>
 </html>
