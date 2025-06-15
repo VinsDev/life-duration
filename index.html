@@ -89,14 +89,14 @@
         
         .life-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
-            max-width: 1000px;
+            max-width: 1200px;
             width: 100%;
         }
         
         .time-unit {
-            background: rgba(0, 255, 255, 0.1);
+            background: rgba(0, 20, 30, 0.85);
             border: 2px solid #00ffff;
             border-radius: 15px;
             padding: 25px;
@@ -134,15 +134,16 @@
             font-size: 1.1em;
             font-weight: 700;
             margin-bottom: 15px;
-            color: #ff00ff;
+            color: #00ffff;
             text-transform: uppercase;
             letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
         }
         
         .unit-value {
             font-size: 2.5em;
             font-weight: 900;
-            color: #00ffff;
+            color: #ffffff;
             text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
             margin-bottom: 10px;
             animation: pulse 2s ease-in-out infinite;
@@ -178,6 +179,10 @@
         @keyframes scanLine {
             0% { transform: translateX(-100%); }
             100% { transform: translateX(100%); }
+        }
+        
+        @media (max-width: 1024px) {
+            .life-grid { grid-template-columns: repeat(2, 1fr); }
         }
         
         @media (max-width: 768px) {
