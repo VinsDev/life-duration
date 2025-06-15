@@ -22,28 +22,33 @@
         height: 100%;
         width: 100%;
         overflow-x: hidden;
-        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: none;
+        position: fixed;
       }
 
       body {
         font-family: "Orbitron", monospace;
         background: linear-gradient(45deg, #0a0a1a, #1a0a1a, #0a1a1a);
         background-size: 400% 400%;
-        background-attachment: fixed; /* Keep background fixed while scrolling */
+        background-attachment: fixed;
         animation: gradientShift 15s ease infinite;
         color: #00ffff;
+        position: relative;
+        overflow-y: auto;
       }
 
       .container {
         display: flex;
         flex-direction: column;
-        justify-content: flex-start; /* Changed from center */
+        justify-content: flex-start;
         align-items: center;
-        min-height: 100vh;
+        min-height: 100%;
         padding: 20px;
         position: relative;
         z-index: 10;
-        overflow-y: auto; /* Enable vertical scrolling */
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
       }
 
       .stars {
@@ -215,6 +220,44 @@
         .container {
           padding: 15px;
           gap: 15px;
+          height: auto;
+          overflow-y: visible;
+        }
+
+        .life-grid {
+          gap: 15px;
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        /* Make hours, minutes, and seconds take full width */
+        .life-grid .time-unit:nth-child(5),
+        .life-grid .time-unit:nth-child(6),
+        .life-grid .time-unit:nth-child(7) {
+          grid-column: 1 / -1;
+        }
+
+        .time-unit {
+          margin-bottom: 0;
+          min-height: 120px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+
+        .title {
+          font-size: 2em;
+          margin: 20px 0;
+        }
+
+        .subtitle {
+          font-size: 1em;
+          margin-bottom: 25px;
+        }
+      }
+
+      @media (max-width: 380px) {
+        .title {
+          font-size: 1.5em;
         }
 
         .life-grid {
@@ -222,11 +265,8 @@
         }
 
         .time-unit {
-          margin-bottom: 10px;
-        }
-
-        .title {
-          margin-top: 20px;
+          padding: 15px;
+          min-height: 100px;
         }
       }
     </style>
@@ -387,26 +427,15 @@
         unit.addEventListener(
           "touchstart",
           function (e) {
+            // Don't prevent default to allow scrolling
             this.style.background = "rgba(255, 0, 255, 0.2)";
             setTimeout(() => {
-              this.style.background = "rgba(0, 255, 255, 0.1)";
+              this.style.background = "rgba(0, 20, 30, 0.85)";
             }, 300);
           },
           { passive: true }
-        ); // Use passive to avoid blocking scrolling
+        );
       });
-
-      // Prevent default touchmove behavior only when necessary
-      document.addEventListener(
-        "touchmove",
-        function (e) {
-          // Only prevent default if touching a non-scrollable element
-          if (e.target.closest(".time-unit")) {
-            e.preventDefault();
-          }
-        },
-        { passive: false }
-      );
     </script>
   </body>
 </html>
