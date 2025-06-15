@@ -2,7 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <!-- Added maximum-scale and user-scalable to prevent pinch-zoom interference -->
     <title>Life Duration Counter - Sci-Fi Interface</title>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap");
@@ -13,14 +17,22 @@
         box-sizing: border-box;
       }
 
+      html,
+      body {
+        height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto; /* Ensure body is scrollable */
+        touch-action: pan-y; /* Allow vertical scrolling, prevent touch interference */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+      }
+
       body {
         font-family: "Orbitron", monospace;
         background: linear-gradient(45deg, #0a0a1a, #1a0a1a, #0a1a1a);
         background-size: 400% 400%;
         animation: gradientShift 15s ease infinite;
         color: #00ffff;
-        min-height: 100vh;
-        position: relative;
+        position: relative; /* Remove fixed positioning to allow natural scrolling */
       }
 
       @keyframes gradientShift {
@@ -40,6 +52,7 @@
         width: 100%;
         height: 100%;
         background: transparent;
+        pointer-events: none; /* Prevent stars from capturing touch events */
       }
 
       .star {
@@ -66,7 +79,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        min-height: 100vh;
+        min-height: calc(100vh - 40px); /* Adjust for padding */
         padding: 20px;
         position: relative;
         z-index: 10;
@@ -289,6 +302,11 @@
     </div>
 
     <script>
+      // Prevent scroll restoration
+      if ("scrollRestoration" in history) {
+        history.scrollRestoration = "manual";
+      }
+
       // Create animated stars
       function createStars() {
         const starsContainer = document.querySelector(".stars");
@@ -386,15 +404,31 @@
       // Update every second
       setInterval(updateLifeDuration, 1000);
 
-      // Add some interactive effects
+      // Add some interactive effects with passive touch events
       document.querySelectorAll(".time-unit").forEach((unit) => {
-        unit.addEventListener("click", function () {
-          this.style.background = "rgba(255, 0, 255, 0.2)";
-          setTimeout(() => {
-            this.style.background = "rgba(0, 255, 255, 0.1)";
-          }, 300);
-        });
+        unit.addEventListener(
+          "touchstart",
+          function (e) {
+            this.style.background = "rgba(255, 0, 255, 0.2)";
+            setTimeout(() => {
+              this.style.background = "rgba(0, 255, 255, 0.1)";
+            }, 300);
+          },
+          { passive: true }
+        ); // Use passive to avoid blocking scrolling
       });
+
+      // Prevent default touchmove behavior only when necessary
+      document.addEventListener(
+        "touchmove",
+        function (e) {
+          // Only prevent default if touching a non-scrollable element
+          if (e.target.closest(".time-unit")) {
+            e.preventDefault();
+          }
+        },
+        { passive: false }
+      );
     </script>
   </body>
 </html>
